@@ -3,6 +3,10 @@
 
 #-----------------------------------------Import-----------------------------------------------------------------
 import math
+from scipy.spatial import Voronoi, voronoi_plot_2d
+import matplotlib.pyplot as plt
+import numpy as np
+import ast
 maxS = float('inf') #Starting comparison tents to infinity.
 
 #-----------------------------------------Functions--------------------------------------------------------------
@@ -85,6 +89,10 @@ def TSP(adj,N):
     #Call TSPRec for current weight
     TSPRec(adj, curr_bound, 0,1, curr_path, visited)
 
+
+
+#------------------------------------Main-------------------------------------
+
 def main():
 
     #Open file and read a matrix
@@ -113,9 +121,17 @@ def main():
     print("Camino para cablear las colonias:", end = ' ')
     for i in range(N+1):
         print(final_path[i], end= ' ')
+    
+    with open('input4.txt', 'r') as f:
+        a = np.array([ast.literal_eval(line) for line in f])
     print("\n--------------------------Parte 2--------------------------")
     print("--------------------------Parte 3--------------------------")
     print("--------------------------Parte 4--------------------------")
+    points = np.array (a)
+    vor = Voronoi(points)
+
+    fig = voronoi_plot_2d(vor)
+    plt.show()
 
 if __name__ == "__main__":
     main()
