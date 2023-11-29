@@ -2,7 +2,7 @@
 
 
 #-----------------------------------------Import-----------------------------------------------------------------
-import math
+import math, heapq
 from scipy.spatial import Voronoi, voronoi_plot_2d
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,6 +13,40 @@ maxS = float('inf') #Starting comparison tents to infinity.
 
 #-----------------------------------------Functions--------------------------------------------------------------
 
+# Parte 1
+def prim(graph):
+    num_vertices = len(graph)
+    visited = [False] * num_vertices
+    min_heap = [(0, 0)]
+
+    while min_heap:
+        weight, current_vertex = heapq.heappop(min_heap)
+
+        if not visited[current_vertex]:
+            visited[current_vertex] = True
+            print(f"Conectar colonia 0 a colonia {current_vertex} con una distancia de {weight} km")
+
+            for neighbor, neighbor_weight in graph[current_vertex]:
+                heapq.heappush(min_heap, (neighbor_weight, neighbor))
+
+def read_input(file_path):
+    graph = []
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            row = list(map(int, line.strip().split(',')))
+            graph.append(row)
+    return graph
+
+# Construir el grafo desde la matriz de adyacencia
+def build_graph(matrix):
+    graph = [[] for _ in range(len(matrix))]
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i])):
+            if matrix[i][j] > 0:
+                graph[i].append((j, matrix[i][j]))
+                graph[j].append((i, matrix[i][j]))
+    return graph
 #Copy of temp solution
 
 def copyToFinal(path):
@@ -151,6 +185,10 @@ class GrafoFlujoMax:
 #------------------------------------Main-------------------------------------
 
 def main():
+    # Parte 1
+    input_file = "input1.txt"
+    adjacency_matrix = read_input(input_file)
+    graph = build_graph(adjacency_matrix)
 
     #Open file and read a matrix
     
@@ -185,6 +223,7 @@ def main():
 
     #---------------Results------------------
     print("--------------------------Parte 1--------------------------")
+    prim(graph)
     
 
     with open('input4.txt', 'r') as f:
