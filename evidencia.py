@@ -7,6 +7,8 @@ from scipy.spatial import Voronoi, voronoi_plot_2d
 import matplotlib.pyplot as plt
 import numpy as np
 import ast
+from collections import defaultdict
+
 maxS = float('inf') #Starting comparison tents to infinity.
 
 #-----------------------------------------Functions--------------------------------------------------------------
@@ -90,6 +92,61 @@ def TSP(adj,N):
     TSPRec(adj, curr_bound, 0,1, curr_path, visited)
 
 
+class GrafoFlujoMax:
+    def __init__(self, graph):
+        self.graph = graph
+        self.ROW = len(graph)
+
+
+    # Using BFS as a searching algorithm 
+    def searching_algo_BFS(self, s, t, parent):
+
+        visited = [False] * (self.ROW)
+        queue = []
+
+        queue.append(s)
+        visited[s] = True
+
+        while queue:
+
+            u = queue.pop(0)
+
+            for ind, val in enumerate(self.graph[u]):
+                if visited[ind] == False and val > 0:
+                    queue.append(ind)
+                    visited[ind] = True
+                    parent[ind] = u
+
+        return True if visited[t] else False
+
+    # Applying fordfulkerson algorithm
+    def ford_fulkerson(self, source, sink):
+        parent = [-1] * (self.ROW)
+        max_flow = 0
+
+        while self.searching_algo_BFS(source, sink, parent):
+
+            path_flow = float("Inf")
+            s = sink
+            while(s != source):
+                path_flow = min(path_flow, self.graph[parent[s]][s])
+                s = parent[s]
+
+            # Adding the path flows
+            max_flow += path_flow
+
+            # Updating the residual values of edges
+            v = sink
+            while(v != source):
+                u = parent[v]
+                self.graph[u][v] -= path_flow
+                self.graph[v][u] += path_flow
+                v = parent[v]
+
+        return max_flow
+
+
+
 
 #------------------------------------Main-------------------------------------
 
@@ -108,25 +165,42 @@ def main():
 
 
     global final_path
-    final_path = [None] * (N + 1) 
+    final_path = [None] * (N + 1)
     global visited
     visited= [False] * N #Fill of Falses
     global final_res
     final_res = maxS
     TSP(adj,N)
 
+    #Open the file with the flux between nodes
+
+    with open('input3.txt', 'r') as f:
+        l2 = [[int(num) for num in line.split(',')] for line in f]    
+
+    global M 
+    M = l2[0][0]
+    adj2 = l2
+
+
+
     #---------------Results------------------
     print("--------------------------Parte 1--------------------------")
     
-    
+
     with open('input4.txt', 'r') as f:
         a = np.array([ast.literal_eval(line) for line in f])
     print("\n--------------------------Parte 2--------------------------")
     #print("Cantidad minima de cableado:", final_res)
+    print(final_path)
     print("Camino para recorrer las colonias:", end = ' ')
     for i in range(N+1):
         print(final_path[i], end= ' ')
     print("\n--------------------------Parte 3--------------------------")
+    grafoFlujoMAximo = GrafoFlujoMax(adj2)
+    d = 0
+    o = N-1
+    print(f"Flujo máximo recorrdio: {grafoFlujoMAximo.ford_fulkerson(d, o) }")
+    
     print("--------------------------Parte 4--------------------------")
     points = np.array (a)
     vor = Voronoi(points)
