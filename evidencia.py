@@ -97,7 +97,7 @@ def main():
 
     #Open file and read a matrix
     
-    with open('input_part1.txt', 'r') as f:
+    with open('input2.txt', 'r') as f:
         l = [[int(num) for num in line.split(',')] for line in f]
     
     #Var declaration
@@ -117,15 +117,16 @@ def main():
 
     #---------------Results------------------
     print("--------------------------Parte 1--------------------------")
-    print("Cantidad minima de cableado:", final_res)
-    print("Camino para cablear las colonias:", end = ' ')
-    for i in range(N+1):
-        print(final_path[i], end= ' ')
+    
     
     with open('input4.txt', 'r') as f:
         a = np.array([ast.literal_eval(line) for line in f])
     print("\n--------------------------Parte 2--------------------------")
-    print("--------------------------Parte 3--------------------------")
+    #print("Cantidad minima de cableado:", final_res)
+    print("Camino para recorrer las colonias:", end = ' ')
+    for i in range(N+1):
+        print(final_path[i], end= ' ')
+    print("\n--------------------------Parte 3--------------------------")
     print("--------------------------Parte 4--------------------------")
     points = np.array (a)
     vor = Voronoi(points)
